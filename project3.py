@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 # Progetto d’Esame – Analisi di un Sistema di Prenotazione Viaggi
 # Scenario Reale
@@ -89,3 +90,21 @@ print("\nL'importo più basso è", listaimporti.min())
 print("\nL'importo massimo è:", listaimporti.max())
 print("\nLa deviazione standard è: ", listaimporti.std())
 print("\nPercentuale importi sopra la media: ",(len(np.where(listaimporti > listaimporti.mean())[0])*100) / np.size(listaimporti))
+
+# Parte 4 – Pandas
+# Crea un DataFrame Pandas con colonne:Cliente, Destinazione, Prezzo, Giorno_Partenza, Durata, Incasso.Calcola con Pandas:incasso totale dell’agenzia,incasso medio per destinazione,top 3 destinazioni più vendute.
+
+data = {
+    "Cliente":["Pippo","Pluto","Paperino","Gastone","Cip","Ciop","Paperone"],
+    "Destinazione":["Livorno","Livorno","Milano","Milano","Milano","Pisa","Lucca"],
+    "Prezzo":[21,21,105,105,105,5,200],
+    "Giorno_Partenza":["30/11/2026","19/04/2026","12/11/2026","14/08/2026","14/07/2026","1/1/2026","12/12/2026"],
+    "Durata":[7,14,24,32,45,1,5],
+    "Incasso":[147,294,2520,3360,4725,5,2500]
+}
+
+df = pd.DataFrame(data)
+print(df)
+print("\nL'incasso totale dell'agenzia è: ",df["Incasso"].sum())
+print("\nIncasso medio per destinazione:\n",df.groupby("Destinazione")["Incasso"].mean())
+print("\nTop 3 destinazioni:\n",df.groupby("Destinazione")["Incasso"].count().sort_values(ascending=False).head(3))
