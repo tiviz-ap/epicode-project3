@@ -1,0 +1,10 @@
+,Cliente,Destinazione,Prezzo,Giorno_Partenza,Durata,Incasso,Continenti
+0,Pippo,Livorno,21,2026-12-12,7,147,Europa
+1,Pluto,Livorno,21,2026-04-19,14,294,Europa
+2,Paperino,Milano,105,2026-11-12,24,2520,Europa
+3,Gastone,Milano,105,2026-08-14,32,3360,Europa
+4,Cip,Milano,105,2026-07-14,45,4725,Europa
+5,Ciop,Pisa,5,2026-01-01,1,5,Europa
+6,Paperone,Lucca,200,2026-12-12,5,2500,Europa
+7,Paperone,Mumbai,100,2026-12-21,30,3000,Asia
+8,Pippo,Casablanca,50,2026-05-20,20,1000,Africa

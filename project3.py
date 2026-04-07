@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # Progetto d’Esame – Analisi di un Sistema di Prenotazione Viaggi
 # Scenario Reale
@@ -95,16 +96,84 @@ print("\nPercentuale importi sopra la media: ",(len(np.where(listaimporti > list
 # Crea un DataFrame Pandas con colonne:Cliente, Destinazione, Prezzo, Giorno_Partenza, Durata, Incasso.Calcola con Pandas:incasso totale dell’agenzia,incasso medio per destinazione,top 3 destinazioni più vendute.
 
 data = {
-    "Cliente":["Pippo","Pluto","Paperino","Gastone","Cip","Ciop","Paperone"],
-    "Destinazione":["Livorno","Livorno","Milano","Milano","Milano","Pisa","Lucca"],
-    "Prezzo":[21,21,105,105,105,5,200],
-    "Giorno_Partenza":["30/11/2026","19/04/2026","12/11/2026","14/08/2026","14/07/2026","1/1/2026","12/12/2026"],
-    "Durata":[7,14,24,32,45,1,5],
-    "Incasso":[147,294,2520,3360,4725,5,2500]
+    "Cliente":["Pippo","Pluto","Paperino","Gastone","Cip","Ciop","Paperone","Paperone","Pippo"],
+    "Destinazione":["Livorno","Livorno","Milano","Milano","Milano","Pisa","Lucca","Mumbai","Casablanca"],
+    "Prezzo":[21,21,105,105,105,5,200,100,50],
+    "Giorno_Partenza":["12/12/2026","19/04/2026","12/11/2026","14/08/2026","14/07/2026","1/1/2026","12/12/2026","21/12/2026","20/05/2026"],
+    "Durata":[7,14,24,32,45,1,5,30,20],
+    "Incasso":[147,294,2520,3360,4725,5,2500,3000,1000]
 }
 
 df = pd.DataFrame(data)
+df["Giorno_Partenza"] = pd.to_datetime(df["Giorno_Partenza"],format="%d/%m/%Y")
 print(df)
 print("\nL'incasso totale dell'agenzia è: ",df["Incasso"].sum())
 print("\nIncasso medio per destinazione:\n",df.groupby("Destinazione")["Incasso"].mean())
 print("\nTop 3 destinazioni:\n",df.groupby("Destinazione")["Incasso"].count().sort_values(ascending=False).head(3))
+
+# Parte 5 – Matplotlib
+
+# Crea un grafico a barre che mostri l’incasso per ogni destinazione.Crea un grafico a linee che mostri l’andamento giornaliero degli incassi.Crea un grafico a torta che mostri la percentuale di vendite per ciascuna destinazione.
+
+valori = df.groupby("Destinazione")["Incasso"].sum().reset_index()["Incasso"].tolist()
+categorie = df.groupby("Destinazione")["Incasso"].sum().reset_index()["Destinazione"].tolist()
+print (df.groupby("Destinazione")["Incasso"].sum().reset_index())
+plt.bar(categorie,valori,color="skyblue")
+plt.title("Incasso per destinazione")
+plt.show()
+
+print (df.groupby("Giorno_Partenza")["Incasso"].sum().reset_index().sort_values("Giorno_Partenza"))
+x = df.groupby("Giorno_Partenza")["Incasso"].sum().reset_index()["Giorno_Partenza"].tolist()
+y = df.groupby("Giorno_Partenza")["Incasso"].sum().reset_index()["Incasso"].tolist()
+
+plt.fill_between(x,y,color="lightblue",alpha=0.6)
+plt.title("Andamento giornaliero incassi")
+plt.show()
+
+plt.pie(valori,labels=categorie, autopct="%1.1f%%")
+plt.title("Percentuale di vendite per destinazione")
+plt.show()
+
+# Parte 6 – Analisi Avanzata
+# Raggruppa i viaggi in categorie:
+# "Europa", "Asia", "America", "Africa".(Puoi usare un dizionario che associa ogni destinazione a una categoria).
+# Calcola con Pandas:incasso totale per categoria,durata media dei viaggi per categoria.Salva il DataFrame aggiornato in un CSV chiamato prenotazioni_analizzate.csv.
+
+continenti = {
+    "Livorno":"Europa",
+    "Milano": "Europa", 
+    "Pisa": "Europa", 
+    "Lucca" : "Europa",
+    "Mumbai": "Asia",
+    "Casablanca":"Africa"
+    }
+
+df["Continenti"] = df["Destinazione"].map(continenti)
+
+print (
+    "\nIncasso totale per categoria / continente: \n", 
+    df.groupby("Continenti")["Incasso"].sum().reset_index()
+    )
+print (
+    "\nDurata media del viaggio per categoria / continente: \n",
+    df.groupby("Continenti")["Durata"].mean().reset_index()
+    )
+
+df.to_csv("prenotazioni_analizzate.csv")
+
+# Parte 7 – Estensioni
+# Crea una funzione che restituisce i N clienti con più prenotazioni.Realizza un grafico combinato (barre + linea) che mostri:barre = incasso medio per categoria,linea = durata media per categoria.
+
+def top_prenotazioni(df, n=3):
+    return df["Cliente"].value_counts().head(n)
+
+print("\nTop clienti per numero di prenotazioni:\n", top_prenotazioni(df))
+
+fig, (ax1,ax2) = plt.subplots(1,2)
+x = df.groupby("Continenti")["Incasso"].mean().reset_index()["Incasso"].tolist()
+y = df.groupby("Continenti")["Incasso"].mean().reset_index()["Continenti"].tolist()
+x2 = df.groupby("Continenti")["Durata"].mean().reset_index()["Durata"].tolist()
+ax1.bar(y,x,color="skyblue",edgecolor="red")
+ax2.plot(y,x2,color="black")
+
+plt.show()
